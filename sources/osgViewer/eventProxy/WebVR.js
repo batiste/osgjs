@@ -1,6 +1,20 @@
 'use strict';
 var Notify = require( 'osg/Notify' );
 var Quat = require( 'osg/Quat' );
+var Vec4 = require( 'osg/Vec4' );
+
+
+var PositionState = function () {
+    this.hasPosition = false;
+    this.position = Vec4.create();
+    this.linearVelocity = Vec4.create();
+    this.linearAcceleration = Vec4.create();
+
+    this.hasOrientation = false;
+    this.orientation = Quat.create();
+    this.angularVelocity = Quat.create();
+    this.angularAcceleration = Quat.create();
+};
 
 
 var WebVR = function ( viewer ) {
@@ -10,6 +24,8 @@ var WebVR = function ( viewer ) {
     this._hmd = undefined;
     this._sensor = undefined;
     this._quat = Quat.create();
+
+    this._positionState = new PositionState();
 };
 
 WebVR.prototype = {
@@ -89,6 +105,20 @@ WebVR.prototype = {
         // update the manipulator with the rotation of the device
         if ( manipulatorAdapter.update ) {
 
+            var state = this._sensor.getState();
+
+            this._positionState.hasPosition = state.hasPosition;
+            this._positionState.hasOrientation = state.hasOrientation;
+
+            if ( state.hasPosition ) {
+                this._positionState.position[ 0 ] = state.position.x;
+                this._positionState.position[ 1 ] = state.position.y;
+                this._positionState.position[ 2 ] = state.position.z;
+
+                // should copy linearVelocity linearAcceleration
+            }
+
+
             var quat = this._sensor.getState().orientation;
 
             // If no real oculus is detected, navigators (vr builds of FF and Chrome) simulate a fake oculus
@@ -108,7 +138,11 @@ WebVR.prototype = {
                 this._quat[ 3 ] = quat.w;
             }
 
-            manipulatorAdapter.update( this._quat );
+            if ( state.hasOrientation ) {
+                Quat.copy( this._quat, this._positionState.orientation );
+            }
+
+            manipulatorAdapter.update( this._positionState );
         }
     },
 
