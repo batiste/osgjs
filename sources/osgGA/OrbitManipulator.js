@@ -209,7 +209,8 @@ OrbitManipulator.prototype = MACROUTILS.objectInherit( Manipulator.prototype, {
     } )(),
     computeHomePosition: function ( useBoundingBox ) {
         var bs = this.getHomeBound( useBoundingBox );
-        if ( !bs ) return;
+        if ( !bs || !bs.valid() ) return;
+
         this.setDistance( this.getHomeDistance( bs ) );
         this.setTarget( bs.center() );
     },
@@ -269,7 +270,7 @@ OrbitManipulator.prototype = MACROUTILS.objectInherit( Manipulator.prototype, {
             // modulate panning speed with verticalFov value
             // if it's an orthographic we don't change the panning speed
             // TODO : manipulators in osgjs don't support well true orthographic camera anyway because they
-            // manage the view matrix (and you need to edit the projection matrix to 'zoom' for true ortho camera) 
+            // manage the view matrix (and you need to edit the projection matrix to 'zoom' for true ortho camera)
             var vFov = proj[ 15 ] === 1 ? 1.0 : 2.00 / proj[ 5 ];
             var speed = this.getSpeedFactor() * vFov;
             dy *= speed;

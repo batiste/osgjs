@@ -33,7 +33,7 @@ FirstPersonManipulator.ControllerList = [ 'StandardMouseKeyboard', 'WebVR', 'Dev
 FirstPersonManipulator.prototype = MACROUTILS.objectInherit( Manipulator.prototype, {
     computeHomePosition: function ( useBoundingBox ) {
         var bs = this.getHomeBound( useBoundingBox );
-        if ( !bs ) return;
+        if ( !bs || !bs.valid() ) return;
 
         this._distance = this.getHomeDistance( bs );
         var cen = bs.center();
