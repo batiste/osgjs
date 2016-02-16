@@ -167,4 +167,33 @@ module.exports = function () {
         Quat.transformVec3( [ 0, 0.707107, 0, 0.707107 ], v, v );
         mockup.near( v, [ 3.0, 2.0, -1.0 ] );
     } );
+
+
+    QUnit.test( 'Quat.makeRotateFromEuler', function () {
+        var alpha = 288 * Math.PI / 180.0;
+        var beta = 5 * Math.PI / 180.0;
+        var gamma = 85 * Math.PI / 180.0;
+        var order = 'YXZ';
+
+        var q = Quat.makeRotateFromEuler( alpha, beta, gamma, order, Quat.create() );
+        var m = Matrix.create();
+        Matrix.makeRotateFromQuat( q, m );
+
+        var rotateX = Matrix.makeRotate( alpha, 1, 0, 0, Matrix.create() );
+        var rotateY = Matrix.makeRotate( beta, 0, 1, 0, Matrix.create() );
+        var rotateZ = Matrix.makeRotate( gamma, 0, 0, 1, Matrix.create() );
+
+        var result = Matrix.create();
+        Matrix.mult( rotateY, rotateX, result );
+        Matrix.mult( result, rotateZ, result );
+
+        var q2 = Quat.create();
+        Matrix.getRotate( result, q2 );
+
+        var q3 = Quat.create();
+        Matrix.getRotate( m, q3 );
+
+        mockup.near( q3, q2 );
+    } );
+
 };
