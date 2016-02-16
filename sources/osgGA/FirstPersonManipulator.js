@@ -252,7 +252,7 @@ FirstPersonManipulator.prototype = MACROUTILS.objectInherit( Manipulator.prototy
             Vec3.mult( tmp, distance, tmp );
             Vec3.add( this._eye, tmp, this._eye );
         };
-    } )(),
+    } )()
 } );
 
 FirstPersonManipulator.DeviceOrientation = FirstPersonManipulatorDeviceOrientationController;
