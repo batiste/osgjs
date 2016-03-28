@@ -680,6 +680,16 @@ State.prototype = MACROUTILS.objectLibraryClass( MACROUTILS.objectInherit( Objec
         }
     },
 
+    setIndexArrayForce: function ( array, glParam ) {
+
+        var gl = glParam || this._graphicContext;
+
+        array.bind( gl );
+        array.dirty();
+        array.compile( gl );
+
+    },
+
     setIndexArray: function ( array ) {
         var gl = this._graphicContext;
         if ( this.currentIndexVBO !== array ) {
@@ -744,6 +754,19 @@ State.prototype = MACROUTILS.objectLibraryClass( MACROUTILS.objectInherit( Objec
             uniform.setFloat( 0.0 );
         }
         uniform.apply( gl, program._uniformsCache.ArrayColorEnabled );
+
+    },
+
+    setVertexAttribArrayForce: function ( attrib, array, normalize, glParam ) {
+
+        var gl = glParam || this._graphicContext;
+
+        array.bind( gl );
+        array.dirty();
+        array.compile( gl );
+
+        gl.enableVertexAttribArray( attrib );
+        gl.vertexAttribPointer( attrib, array.getItemSize(), array.getType(), normalize, 0, 0 );
 
     },
 
